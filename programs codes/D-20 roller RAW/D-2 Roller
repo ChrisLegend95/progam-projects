@@ -1,0 +1,232 @@
+import tkinter as tk
+from tkinter import ttk
+import time
+from random import randrange
+import threading
+from ttkthemes import ThemedTk
+import tkinter.messagebox
+from idlelib.tooltip import Hovertip
+
+
+
+#----Themes--------
+def clearlooks():
+    try:
+        root.set_theme("clearlooks")
+    except:
+        pass
+def equilux():
+    try:
+        root.set_theme("equilux")
+    except:
+        pass
+def yaru():
+    try:
+        root.set_theme("yaru")
+    except:
+        pass
+
+
+# root = tk.Tk()
+root = ThemedTk(themebg=True)
+root.set_theme("equilux")
+root.geometry("400x300")
+root.title("D-20")
+root.resizable(0, 0)
+root.attributes('-alpha', 1)
+root.iconbitmap("C:\\Users\\crill\\Documents\\Python sandbox\\Sandbox\\Dice 20 roll\\dice.ico")
+
+#-------[ Variable of entry and radio button ]--------
+
+def slide(x):
+    root.attributes('-alpha', bar.get())
+
+n = tk.IntVar()
+luck = tk.IntVar()
+sta = tk.IntVar()
+ens = tk.IntVar()
+
+#--------[ Diffrent modes for the D-20 ]------------
+
+def roll(r):
+    print("Normal!")
+    rar = (20)
+    while r:
+        rdmg = randrange(rar)
+        time.sleep(0.01)
+        n.set(rdmg)
+        r -= 1
+        if r == 0:
+            print("Roll made it")
+            if n.get() in range(1,6):
+                number.config(foreground="red")
+            else:
+                if n.get() in range(6,16):
+                        number.config(foreground="orange")
+                else:
+                    if n.get() in range(16,20):
+                            number.config(foreground="#00D100")
+
+def roll_luck(r):
+    print("Lucky!")
+    while r:
+        rdmg = randrange(1, 20)
+        time.sleep(0.01)
+        n.set(rdmg)
+        r -= 1
+        if r == 0:
+            print("Roll made it")
+            if n.get() in range(1,15):
+                print("Lucky roll!")
+                re_l = randrange(15, 20)
+                number.config(foreground="#0064FF")
+                n.set(re_l)
+            else:
+                if n.get() in range(15,18):
+                    number.config(foreground="orange")
+                else:
+                    if n.get() in range(18,20):
+                        print("#00D100")
+                        number.config(foreground="#00D100")
+            
+def roll_hard(r):
+    print("!HARDCORE!")
+    while r:
+        rdmg = randrange(1, 20)
+        time.sleep(0.01)
+        n.set(rdmg)
+        r -= 1
+        if r == 0:
+            print("Roll made it")
+            if n.get() in range(15,20):
+                print("Unlucky")
+                re_l = randrange(1, 15)
+                number.config(foreground="#6D0E10")
+                n.set(re_l)
+            else:
+                if n.get() in range(8,15):
+                    number.config(foreground="#A700CC")
+                else:
+                    if n.get() in range(1, 7):
+                        number.config(foreground="red")
+
+def roll_custom(r):
+    print("Custom!")
+    s = sta.get()
+    e = ens.get()
+    while r:
+        rdmg = randrange(s, e)
+        time.sleep(0.01)
+        n.set(rdmg)
+        r -= 1
+        if r == 0:
+            number.config(foreground="#F8D210")
+
+#--------[ Check what mode is selected ]------------  
+
+def load():
+    if luck.get() == 1:
+        start_luck()
+    else:
+        if luck.get() == 2:
+            start_hard()
+        else:
+            if luck.get() == 0:
+                start()
+            else:
+                if luck.get() == 3:
+                    start_custom()
+
+#--------[ Start up ]------------                    
+
+def start():
+    number.config(foreground="")
+    r = 300
+    thred2 = threading.Thread(target=roll, args=[r])
+    thred2.start()
+
+def start_luck():
+    number.config(foreground="")
+    r = 300
+    thred2 = threading.Thread(target=roll_luck, args=[r])
+    thred2.start()
+
+def start_hard():
+    number.config(foreground="")
+    r = 300
+    thred2 = threading.Thread(target=roll_hard, args=[r])
+    thred2.start()
+
+def start_custom():
+    number.config(foreground="")
+    r = 300
+    thred2 = threading.Thread(target=roll_custom, args=[r])
+    thred2.start()
+
+#------[ End result number from the D-20 ]--------
+number = ttk.Label(root, textvariable=n, font="bold 100",borderwidth=2, relief="ridge")
+number.place(x=270, y=100, anchor="center")
+
+
+#-------[ Modes of D-20 ]----------
+
+normal = ttk.Radiobutton(root, variable=luck, value=0,text="Normal D-20")
+normal.place(x=25, y=60)
+inf = Hovertip(normal, "Roll 1 to 20")
+is_luck = ttk.Radiobutton(root, variable=luck, value=1, text="Luck 15+")
+is_luck.place(x=25, y=90)
+inf = Hovertip(is_luck, "Roll 15 to 20")
+is_hard = ttk.Radiobutton(root, variable=luck, value=2, text="Hardcore")
+is_hard.place(x=25, y=120)
+inf = Hovertip(is_hard, "Roll 15 to 1")
+custom = ttk.Radiobutton(root, variable=luck, value=3, text="Custom")
+custom.place(x=25, y=150)
+inf = Hovertip(custom, "Put in your own nummbers")
+
+#-----Info------
+
+#----[ Custom entry ]----
+
+info = ttk.Label(root, text="Custom numbers")
+info.place(x=25, y=190)
+info2 = ttk.Label(root, text="-", font="bold 14")
+info2.place(x=70, y=214)
+entry = ttk.Entry(root, textvariable=sta, width=6)
+entry.place(x=20, y=215)
+entry2 = ttk.Entry(root, textvariable=ens, width=6)
+entry2.place(x=80, y=215)
+
+#----[ Start button ]
+
+roll_dice = ttk.Button(root, text="Roll D-20", command=load)
+roll_dice.place(x=25, y=25)
+
+scroll = ttk.Label(root, text="Change the transparancy of window.")
+scroll.place(x=150, y=220)
+
+bar = ttk.Scale(root, from_=0.1, to=1.0, value=1, command=slide)
+bar.place(x=180, y=250)
+
+#---[ Nothing to see here. ]
+
+#--Main menu
+
+main = tk.Menu(root)
+root.config(menu=main)
+
+file_menu = tk.Menu(main, tearoff=0)
+main.add_cascade(label="Menu", menu=file_menu)
+file_menu.add_command(label="Exit", command=root.quit)
+
+
+Options_menu = tk.Menu(main, tearoff=0)
+theme = tk.Menu(main, tearoff=0)
+main.add_cascade(label="Option", menu=Options_menu)
+Options_menu.add_cascade(label="Themes", menu=theme)
+# Options_menu.add_command(label="Help", command=onClick)
+theme.add_cascade(label="equilux", command=equilux)
+theme.add_cascade(label="clearlooks",command=clearlooks)
+theme.add_cascade(label="yaru",command=yaru)
+
+
+root.mainloop()

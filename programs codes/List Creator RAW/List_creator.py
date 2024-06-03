@@ -6,7 +6,7 @@ root.title("《 List Creator 》")
 root.resizable(0, 0)
 root.config(background="#18191A")
 root.eval('tk::PlaceWindow . center')
-root.iconbitmap("C:\\Users\\crill\\Documents\\Python sandbox\\RPG test\\python_red.ico")
+root.iconbitmap("python_red.ico")
 
 #---Asign and grab entry text variable
 box = tk.StringVar()
